@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Users Admin</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="adminback.css">
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f4f7fb;
+padding:20px 15px 40px;
+}
+
+/* HEADER */
+
+.top{
+margin-bottom:25px;
+}
+
+.top h2{
+font-size:28px;
+font-weight:700;
+color:#0a2d74;
+}
+
+/* USER CARD */
+
+.user-card{
+background:#fff;
+border-radius:20px;
+padding:18px;
+margin-bottom:16px;
+box-shadow:0 6px 20px rgba(0,0,0,0.06);
+border:1px solid #eef2ff;
+transition:0.25s;
+}
+
+.user-card:hover{
+transform:translateY(-2px);
+}
+
+.user-top{
+display:flex;
+align-items:center;
+gap:14px;
+margin-bottom:15px;
+}
+
+.avatar{
+width:58px;
+height:58px;
+border-radius:50%;
+background:linear-gradient(135deg,#0a2d74,#2563eb);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+color:#fff;
+flex-shrink:0;
+}
+
+.user-info h3{
+font-size:18px;
+color:#0a2d74;
+margin-bottom:4px;
+}
+
+.user-info p{
+font-size:13px;
+color:#666;
+}
+
+/* DETAILS */
+
+.detail{
+display:flex;
+align-items:center;
+gap:12px;
+padding:12px;
+border-radius:14px;
+background:#f8fbff;
+margin-top:10px;
+}
+
+.detail i{
+width:38px;
+height:38px;
+border-radius:12px;
+background:#0a2d74;
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:15px;
+flex-shrink:0;
+}
+
+.detail-text{
+overflow:hidden;
+}
+
+.detail-text span{
+display:block;
+font-size:12px;
+color:#666;
+margin-bottom:2px;
+}
+
+.detail-text b{
+font-size:14px;
+color:#111;
+word-break:break-word;
+}
+
+/* EMPTY */
+
+.empty{
+text-align:center;
+padding:100px 20px;
+color:#777;
+}
+
+.empty i{
+font-size:45px;
+margin-bottom:15px;
+color:#0a2d74;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="top">
+<h2>Users List</h2>
+</div>
+
+<div id="users">
+
+<div class="empty">
+<i class="fa-solid fa-users"></i>
+<p>Loading Users...</p>
+</div>
+
+</div>
+
+<script>
+
+const client = supabase.createClient(
+"https://ouknykcoqvwuedlkctgz.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91a255a2NvcXZ3dWVkbGtjdGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MTAyNjcsImV4cCI6MjA5Mzk4NjI2N30.SF4VoPIiNiqwjXCKeHTBHpLIW_IehimIRUNlHZ8Gw58"
+);
+
+/* =========================
+   CHECK ADMIN LOGIN
+========================= */
+
+async function checkLogin(){
+
+const { data } = await client.auth.getUser();
+
+if(!data.user){
+window.location.href = "adminlogin.html";
+}
+
+}
+
+checkLogin();
+
+/* =========================
+   LOAD USERS
+========================= */
+
+async function loadUsers(){
+
+const { data, error } =
+await client
+.from("users")
+.select("*")
+.order("id",{ascending:false});
+
+if(error){
+
+document.getElementById("users").innerHTML = `
+<div class="empty">
+<i class="fa-solid fa-circle-exclamation"></i>
+<p>Failed To Load Users</p>
+</div>
+`;
+
+return;
+
+}
+
+if(!data || data.length === 0){
+
+document.getElementById("users").innerHTML = `
+<div class="empty">
+<i class="fa-solid fa-users-slash"></i>
+<p>No Users Found</p>
+</div>
+`;
+
+return;
+
+}
+
+let html = "";
+
+data.forEach(u=>{
+
+html += `
+
+<div class="user-card">
+
+<div class="user-top">
+
+<div class="avatar">
+<i class="fa-solid fa-user"></i>
+</div>
+
+<div class="user-info">
+<h3>${u.name || "No Name"}</h3>
+<p>User Account</p>
+</div>
+
+</div>
+
+<div class="detail">
+
+<i class="fa-solid fa-envelope"></i>
+
+<div class="detail-text">
+<span>Email</span>
+<b>${u.email || "No Email"}</b>
+</div>
+
+</div>
+
+<div class="detail">
+
+<i class="fa-solid fa-phone"></i>
+
+<div class="detail-text">
+<span>Phone</span>
+<b>${u.phone || "No Phone"}</b>
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("users").innerHTML = html;
+
+}
+
+loadUsers();
+
+</script>
+
+<script src="adminback.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bookings Admin</title>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="adminback.css">
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+}
+
+body{
+background:#f4f7fb;
+padding:15px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.top h2{
+color:#0a2d74;
+}
+
+.booking-card{
+background:#fff;
+padding:15px;
+border-radius:16px;
+margin-bottom:15px;
+box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+
+.booking-card h3{
+color:#0a2d74;
+margin-bottom:10px;
+font-size:18px;
+}
+
+.booking-card p{
+font-size:14px;
+margin:6px 0;
+color:#444;
+}
+
+.btns{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:15px;
+}
+
+.btn{
+border:none;
+padding:10px 14px;
+border-radius:10px;
+color:#fff;
+cursor:pointer;
+font-size:13px;
+text-decoration:none;
+}
+
+.accept{
+background:#16a34a;
+}
+
+.waiting{
+background:#f59e0b;
+}
+
+.reject{
+background:#dc2626;
+}
+
+.view{
+background:#0a2d74;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="top">
+<h2>Bookings</h2>
+</div>
+
+<div id="bookingList"></div>
+
+<script>
+
+const SUPABASE_URL =
+"https://ouknykcoqvwuedlkctgz.supabase.co";
+
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91a255a2NvcXZ3dWVkbGtjdGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MTAyNjcsImV4cCI6MjA5Mzk4NjI2N30.SF4VoPIiNiqwjXCKeHTBHpLIW_IehimIRUNlHZ8Gw58";
+
+const client =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+/* =========================
+   CHECK LOGIN
+========================= */
+
+async function checkLogin(){
+
+const { data } = await client.auth.getUser();
+
+if(!data.user){
+window.location.href = "adminlogin.html";
+}
+
+}
+
+checkLogin();
+
+/* =========================
+   LOAD BOOKINGS
+========================= */
+
+async function loadBookings(){
+
+const { data, error } = await client
+.from("bookings")
+.select("*")
+.order("created_at", { ascending:false });
+
+if(error){
+console.log(error);
+return;
+}
+
+let html = "";
+
+data.forEach(b => {
+
+let traveller = b.travellers?.[0] || {};
+
+html += `
+
+<div class="booking-card">
+
+<h3>${traveller.name || "No Name"}</h3>
+
+<p><b>Email:</b> ${b.user_email || "No Email"}</p>
+
+<p><b>Phone:</b> ${traveller.phone || "No Phone"}</p>
+
+<p><b>Package:</b> ${b.title || "No Package"}</p>
+
+<p><b>Total Price:</b> ₹${b.total || 0}</p>
+
+<p><b>Booking Date:</b>
+${new Date(b.created_at).toLocaleString()}
+</p>
+
+<div class="btns">
+
+<button class="btn accept">
+Accept
+</button>
+
+<button class="btn waiting">
+Waiting
+</button>
+
+<button class="btn reject">
+Reject
+</button>
+
+<a href="view.html?id=${b.id}"
+class="btn view">
+View
+</a>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("bookingList").innerHTML = html;
+
+}
+
+loadBookings();
+
+</script>
+<script src="back.js"></script>
+</body>
+</html>

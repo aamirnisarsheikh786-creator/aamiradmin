@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Add Package</title>
+<link rel="stylesheet" href="adminback.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f4f7fb;
+padding:20px;
+}
+
+/* HEADER */
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.top h2{
+color:#0a2d74;
+}
+
+/* FORM */
+
+.form-box{
+background:#fff;
+padding:18px;
+border-radius:18px;
+box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+
+.input-box{
+margin-bottom:15px;
+}
+
+.input-box label{
+display:block;
+margin-bottom:8px;
+font-size:14px;
+font-weight:600;
+color:#0a2d74;
+}
+
+.input-box input{
+width:100%;
+height:50px;
+border:1px solid #ddd;
+border-radius:12px;
+padding:0 14px;
+font-size:14px;
+outline:none;
+}
+
+/* BUTTON */
+
+.btn{
+width:100%;
+height:54px;
+border:none;
+border-radius:14px;
+background:#0a2d74;
+color:#fff;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+margin-top:10px;
+}
+
+/* ALERT */
+
+.alert{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%) translateY(-100px);
+
+background:#0a2d74;
+color:#fff;
+
+padding:14px 18px;
+
+border-radius:14px;
+
+display:flex;
+align-items:center;
+gap:12px;
+
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+
+z-index:99999;
+
+transition:0.4s ease;
+}
+
+.alert.show{
+transform:translateX(-50%) translateY(0);
+}
+
+.alert svg{
+width:24px;
+height:24px;
+fill:#22c55e;
+}
+
+.alert p{
+font-size:14px;
+font-weight:500;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ALERT -->
+
+<div class="alert" id="alertBox">
+
+<svg viewBox="0 0 24 24">
+<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10
+10-4.5 10-10S17.5 2 12 2zm-1 14.2l-3.5-3.5
+1.4-1.4 2.1 2.1 4.6-4.6 1.4 1.4-6 6z"/>
+</svg>
+
+<p id="alertText">
+Package Added Successfully
+</p>
+
+</div>
+
+<!-- TOP -->
+
+<div class="top">
+<h2>Add Package</h2>
+</div>
+
+<!-- FORM -->
+
+<div class="form-box">
+
+<div class="input-box">
+<label>Package Title</label>
+<input type="text" id="title"
+placeholder="Enter title">
+</div>
+
+<div class="input-box">
+<label>Image URL</label>
+<input type="text" id="image"
+placeholder="Enter image URL">
+</div>
+
+<div class="input-box">
+<label>Price</label>
+<input type="number" id="price"
+placeholder="Enter price">
+</div>
+
+<div class="input-box">
+<label>Days</label>
+<input type="text" id="days"
+placeholder="4 Night / 5 Days">
+</div>
+
+<div class="input-box">
+<label>Detail Link</label>
+<input type="text" id="detail_link"
+placeholder="gulmargdetail.html?id=1">
+</div>
+
+<button class="btn"
+onclick="addPackage()">
+Add Package
+</button>
+
+</div>
+
+<script>
+
+const client = supabase.createClient(
+"https://ouknykcoqvwuedlkctgz.supabase.co",
+
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91a255a2NvcXZ3dWVkbGtjdGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MTAyNjcsImV4cCI6MjA5Mzk4NjI2N30.SF4VoPIiNiqwjXCKeHTBHpLIW_IehimIRUNlHZ8Gw58"
+);
+
+/* =========================
+   ALERT FUNCTION
+========================= */
+
+function showAlert(message){
+
+const alertBox =
+document.getElementById("alertBox");
+
+document.getElementById("alertText")
+.innerText = message;
+
+alertBox.classList.add("show");
+
+setTimeout(()=>{
+
+alertBox.classList.remove("show");
+
+},2500);
+
+}
+
+/* =========================
+   ADD PACKAGE
+========================= */
+
+async function addPackage(){
+
+const title =
+document.getElementById("title").value;
+
+const image =
+document.getElementById("image").value;
+
+const price =
+document.getElementById("price").value;
+
+const days =
+document.getElementById("days").value;
+
+const detail_link =
+document.getElementById("detail_link").value;
+
+/* VALIDATION */
+
+if(
+!title ||
+!image ||
+!price ||
+!days ||
+!detail_link
+){
+
+showAlert("Please Fill All Fields");
+
+return;
+
+}
+
+/* INSERT */
+
+const { error } = await client
+.from("packages")
+.insert([{
+
+title:title,
+
+image:image,
+
+price:price,
+
+days:days,
+
+detail_link:detail_link
+
+}]);
+
+if(error){
+
+showAlert(error.message);
+
+return;
+
+}
+
+/* SUCCESS */
+
+showAlert("Package Added Successfully");
+
+/* CLEAR */
+
+document.getElementById("title").value="";
+document.getElementById("image").value="";
+document.getElementById("price").value="";
+document.getElementById("days").value="";
+document.getElementById("detail_link").value="";
+
+}
+
+</script>
+<script src="adminback.js"></script>
+</body>
+</html>

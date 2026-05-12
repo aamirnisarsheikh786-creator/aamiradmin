@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Poppins,sans-serif;
+  background:#f4f7fb;
+}
+
+/* TOP BAR */
+.topbar{
+  background:#0a2d74;
+  color:#fff;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-weight:600;
+}
+
+/* MENU */
+.menu{
+  display:flex;
+  gap:10px;
+}
+
+.menu a{
+  color:#fff;
+  text-decoration:none;
+  background:rgba(255,255,255,0.15);
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:14px;
+}
+
+/* CONTAINER */
+.container{
+  padding:15px;
+}
+
+/* CARD */
+.card{
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.05);
+}
+
+h3{
+  margin:0 0 10px 0;
+  color:#0a2d74;
+}
+
+p{
+  margin:4px 0;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">ONE TOUR ADMIN</div>
+
+  <div class="menu">
+    <a href="dashboard.html">Home</a>
+    <a href="users.html">Users</a>
+    <a href="bookings.html">Bookings</a>
+        <a href="addpackage.html">Add Package</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+<h2>Dashboard</h2>
+
+<div class="card">
+<h3>Total Users</h3>
+<p id="userCount">Loading...</p>
+</div>
+
+<div class="card">
+<h3>Total Bookings</h3>
+<p id="bookingCount">Loading...</p>
+</div>
+
+</div>
+
+<script>
+const SUPABASE_URL="https://ouknykcoqvwuedlkctgz.supabase.co";
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91a255a2NvcXZ3dWVkbGtjdGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MTAyNjcsImV4cCI6MjA5Mzk4NjI2N30.SF4VoPIiNiqwjXCKeHTBHpLIW_IehimIRUNlHZ8Gw58";
+
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* =========================
+   AUTH CHECK (IMPORTANT)
+========================= */
+async function checkLogin(){
+
+const { data } = await client.auth.getUser();
+
+if(!data.user){
+  window.location.href = "adminlogin.html";
+}
+
+}
+
+checkLogin();
+
+/* =========================
+   LOAD COUNTS
+========================= */
+
+async function loadData(){
+
+const users = await client.from("users").select("*");
+const bookings = await client.from("bookings").select("*");
+
+document.getElementById("userCount").innerText =
+users.data ? users.data.length : 0;
+
+document.getElementById("bookingCount").innerText =
+bookings.data ? bookings.data.length : 0;
+
+}
+
+loadData();
+
+/* LOGOUT */
+async function logout(){
+await client.auth.signOut();
+window.location.href = "adminlogin.html";
+}
+</script>
+
+</body>
+</html>
