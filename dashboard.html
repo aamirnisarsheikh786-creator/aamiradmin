@@ -3,149 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Admin Dashboard</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="dashboard.css">
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
-body{
-  margin:0;
-  font-family:Poppins,sans-serif;
-  background:#f4f7fb;
-}
-
-/* TOP BAR */
-.topbar{
-  background:#0a2d74;
-  color:#fff;
-  padding:15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.logo{
-  font-weight:600;
-}
-
-/* MENU */
-.menu{
-  display:flex;
-  gap:10px;
-}
-
-.menu a{
-  color:#fff;
-  text-decoration:none;
-  background:rgba(255,255,255,0.15);
-  padding:8px 12px;
-  border-radius:8px;
-  font-size:14px;
-}
-
-/* CONTAINER */
-.container{
-  padding:15px;
-}
-
-/* CARD */
-.card{
-  background:#fff;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.05);
-}
-
-h3{
-  margin:0 0 10px 0;
-  color:#0a2d74;
-}
-
-p{
-  margin:4px 0;
-  font-size:14px;
+.card-link{
+text-decoration:none;
+color:inherit;
 }
 </style>
+
 </head>
 
 <body>
 
-<!-- TOP BAR -->
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+ONE TOUR IN KASHMIR
+</div>
+
+<div class="menu">
+
+<a href="#" class="active">
+<i class="fa-solid fa-house"></i>
+<span>Dashboard</span>
+</a>
+
+<a href="bookings.html">
+<i class="fa-solid fa-calendar-check"></i>
+<span>Bookings</span>
+</a>
+
+<a href="users.html">
+<i class="fa-solid fa-users"></i>
+<span>Users</span>
+</a>
+
+<a href="addpackage.html">
+<i class="fa-solid fa-plus"></i>
+<span>Add Package</span>
+</a>
+
+<a href="adminlogin.html">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>Logout</span>
+</a>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<!-- TOPBAR -->
+
 <div class="topbar">
-  <div class="logo">ONE TOUR ADMIN</div>
 
-  <div class="menu">
-    <a href="dashboard.html">Home</a>
-    <a href="users.html">Users</a>
-    <a href="bookings.html">Bookings</a>
-        <a href="addpackage.html">Add Package</a>
-    <a href="#" onclick="logout()">Logout</a>
-  </div>
-</div>
-
-<!-- CONTENT -->
-<div class="container">
-
+<div>
 <h2>Dashboard</h2>
-
-<div class="card">
-<h3>Total Users</h3>
-<p id="userCount">Loading...</p>
+<p>Welcome Admin Panel</p>
 </div>
 
+<div class="admin-box">
+
+<img src="logoot.png">
+
+<div>
+<h4>Admin</h4>
+<span>One Tour In Kashmir</span>
+</div>
+
+</div>
+
+</div>
+
+<!-- CARDS -->
+
+<div class="cards">
+
+<a href="bookings.html" class="card-link">
 <div class="card">
-<h3>Total Bookings</h3>
-<p id="bookingCount">Loading...</p>
+
+<div class="icon blue">
+<i class="fa-solid fa-calendar-check"></i>
+</div>
+
+<h3 id="totalBookings">0</h3>
+<p>Total Bookings</p>
+
+</div>
+</a>
+
+<a href="users.html" class="card-link">
+<div class="card">
+
+<div class="icon green">
+<i class="fa-solid fa-users"></i>
+</div>
+
+<h3 id="totalUsers">0</h3>
+<p>Total Users</p>
+
+</div>
+</a>
+
+<a href="#" class="card-link">
+<div class="card">
+
+<div class="icon orange">
+<i class="fa-solid fa-box"></i>
+</div>
+
+<h3 id="totalPackages">0</h3>
+<p>Total Packages</p>
+
+</div>
+</a>
+
+</div>
+
+<!-- RECENT -->
+
+<div class="recent">
+
+<h3>Recent Activity</h3>
+
+<div class="recent-card">
+<i class="fa-solid fa-circle-check"></i>
+New Booking Added
+</div>
+
+<div class="recent-card">
+<i class="fa-solid fa-user-plus"></i>
+New User Registered
+</div>
+
+<div class="recent-card">
+<i class="fa-solid fa-suitcase"></i>
+New Package Uploaded
+</div>
+
 </div>
 
 </div>
 
 <script>
-const SUPABASE_URL="https://ouknykcoqvwuedlkctgz.supabase.co";
-const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91a255a2NvcXZ3dWVkbGtjdGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MTAyNjcsImV4cCI6MjA5Mzk4NjI2N30.SF4VoPIiNiqwjXCKeHTBHpLIW_IehimIRUNlHZ8Gw58";
+
+/* =========================
+   SUPABASE CONNECT
+========================= */
+
+const SUPABASE_URL = "https://ouknykcoqvwuedlkctgz.supabase.co";
+
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91a255a2NvcXZ3dWVkbGtjdGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MTAyNjcsImV4cCI6MjA5Mzk4NjI2N30.SF4VoPIiNiqwjXCKeHTBHpLIW_IehimIRUNlHZ8Gw58";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* =========================
-   AUTH CHECK (IMPORTANT)
-========================= */
-async function checkLogin(){
-
-const { data } = await client.auth.getUser();
-
-if(!data.user){
-  window.location.href = "adminlogin.html";
-}
-
-}
-
-checkLogin();
-
-/* =========================
-   LOAD COUNTS
+   LOAD STATS
 ========================= */
 
-async function loadData(){
+async function loadStats(){
 
-const users = await client.from("users").select("*");
-const bookings = await client.from("bookings").select("*");
+// BOOKINGS COUNT
+const { count: bookingsCount } = await client
+.from("bookings")
+.select("*", { count: "exact", head: true });
 
-document.getElementById("userCount").innerText =
-users.data ? users.data.length : 0;
+// USERS COUNT
+const { count: usersCount } = await client
+.from("users")
+.select("*", { count: "exact", head: true });
 
-document.getElementById("bookingCount").innerText =
-bookings.data ? bookings.data.length : 0;
+// PACKAGES COUNT
+const { count: packagesCount } = await client
+.from("packages")
+.select("*", { count: "exact", head: true });
+
+document.getElementById("totalBookings").innerText =
+bookingsCount || 0;
+
+document.getElementById("totalUsers").innerText =
+usersCount || 0;
+
+document.getElementById("totalPackages").innerText =
+packagesCount || 0;
 
 }
 
-loadData();
+loadStats();
 
-/* LOGOUT */
-async function logout(){
-await client.auth.signOut();
-window.location.href = "adminlogin.html";
-}
 </script>
 
 </body>
