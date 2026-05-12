@@ -204,6 +204,19 @@ packagesCount || 0;
 }
 
 loadStats();
+   async function logout(){
+
+const { error } = await client.auth.signOut();
+
+if(error){
+alert("Logout Failed");
+return;
+}
+
+alert("Logged Out Successfully");
+
+window.location.href = "adminlogin.html";
+   }
 
 </script>
 
